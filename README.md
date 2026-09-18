@@ -433,7 +433,7 @@ server.on('upgrade', (req, socket, head) => {
 server.listen(19091, '<NAS_IP>');   // ← 必须是局域网 IP
 ```
 
-**验证**：`ss -tlnp | grep 19091` 应显示 `192.168.31.123:19091`（或你的 NAS IP）。
+**验证**：`ss -tlnp | grep 19091` 应显示 `<NAS_IP>:19091`（即你的 NAS 局域网 IP）。
 
 ---
 
