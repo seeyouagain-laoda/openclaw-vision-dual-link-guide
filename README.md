@@ -159,7 +159,7 @@ Agent 的价值在于**替你操作真实世界的东西**。而真实世界里�
 | Cloudflared | **2026.9.1**（built 2026-09-11） | 隧道客户端 |
 | New API | **v1.0.0-rc.37** | 聚合网关 |
 | AstrBot | **4.28.0** | QQ 机器人 |
-| 工作目录 | `/vol4/openclaw-data/workspace/` | `/vol4` 466 G，已用 129 G（28%） |
+| 工作目录 | `/volX/openclaw-data/workspace/` | `/vol4` 466 G，已用 129 G（28%） |
 
 **⚠️ 一个值得记录的版本不一致**：`openclaw --version` 报 **2026.9.4**，但 systemd 单元里的 `OPENCLAW_SERVICE_VERSION` 与 `Description` 仍写着 **v2026.7.1**（升级时没同步更新单元文件）。**排查时以 `openclaw --version` 为准**，别被单元文件误导。
 
@@ -510,9 +510,9 @@ Agent 在测试中「自己动手」把图生图跑通了——**这本身很惊
 
 | 项 | 情况 |
 |---|---|
-| 原因 | `pick_out_dir()` 的**第一个候选**是 `r"C:\Users\user\Desktop\...\Gemini生图"`（写死的 Windows 路径） |
-| Linux 上发生什么 | `os.makedirs` **真的创建了一个名字叫 `C:\Users\user\...` 的目录** |
-| 实测证据 | 垃圾目录 `/vol4/openclaw-data/workspace/oc_imgtest/C:\Users\...` 确实存在 |
+| 原因 | `pick_out_dir()` 的**第一个候选**是 `r"C:\Users\<USER>\Desktop\...\Gemini生图"`（写死的 Windows 路径） |
+| Linux 上发生什么 | `os.makedirs` **真的创建了一个名字叫 `C:\Users\<USER>\...` 的目录** |
+| 实测证据 | 垃圾目录 `/volX/openclaw-data/workspace/oc_imgtest/C:\Users\...` 确实存在 |
 | 修复 | 移除 Windows 候选 + 加防护：路径前 3 字符含 `:` 或分隔符就跳过；首选 `/home/<USER>/Desktop` |
 
 **教训**：跨平台脚本里的路径候选**必须做平台过滤**，不能用「反正前面几个不存在会自动跳过」的思路——`makedirs` 会**创建**它。
@@ -521,7 +521,7 @@ Agent 在测试中「自己动手」把图生图跑通了——**这本身很惊
 
 | 项 | 情况 |
 |---|---|
-| 问题 | NAS 上的 `SKILL.md` 是 **PC 客户端版本**，写死 `C:\Users\user\.workbuddy\...` 的 Windows 路径 |
+| 问题 | NAS 上的 `SKILL.md` 是 **PC 客户端版本**，写死 `C:\Users\<USER>\.workbuddy\...` 的 Windows 路径 |
 | 实际后果 | **Agent 被误导，去反编译一个 66 MB 的 `antigravity-tools` 二进制找答案** —— 实测真的发生了 |
 | 修复 | 重写为 NAS 版：Linux 路径 + 记录文生图/图生图两种用法 + 明确纪律「不要去反编译二进制」 |
 
